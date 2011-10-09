@@ -1,4 +1,0 @@
-ul
-  - for (var d in documents)
-    li= d.title
-
