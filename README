@@ -1,0 +1,7 @@
+TeamAdminHelper README
+
+Author Torben Lauritzen (github: tlauritzen)
+
+Purpose: Trying to helper volunteer sportscoaches to put together teams, based on who is available, who has played the least, and maybe a score on each player. Communication with players (or their parents) will be done through email, sms, and HTML 5 mobile webapp.
+
+Technology: A subpurpose of this project is to learn about node.js and noSQL databases (MongoDB in this case).
