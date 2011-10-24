@@ -1,0 +1,14 @@
+div
+  label Title:
+    input(name='event[title]', value=e.title || '')
+div
+  label Date:
+    input(name='event[date]', id='datepicker', type='text', value=e.date || '')
+div
+  label Time:
+    input(name='event[time]', type='time', value=e.time || '')
+div
+  label No of players:
+    input(name='event[noOfPlayers]', value=e.noOfPlayers || '')
+div
+  input(type='submit', value='Save')

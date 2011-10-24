@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -70,21 +69,12 @@ app.configure('production', function(){
 });
 
 var db = mongoose.connect('mongodb://localhost/db');
+mongoose.model('User', User);
 var User = db.model('User');
 
-mongoose.model('User', User);
 
-/*
-User.remove({}, function() {});
-
-var u = new User();
-//u.email = 'ting@ting.dk'
-u.name = 'Arnold';
-u.save(function(err){
-    if(err) { console.log('Error saving'); }
-    console.log('Saved!');
-});
-*/
+mongoose.model('Event', Event);
+var Event = db.model('Event');
 
 
 app.configure(function () {
@@ -94,24 +84,22 @@ app.configure(function () {
 // Routes
 
 app.get('/', loadUser, function (req, res, next) {
-    User.find({}, function (err, users) {
-      if (err) return next(err);
-
-      res.render('index', {
-	  title: 'User list',
-          users: users
-      });
-    });
-  });
-
-/*
-app.get('/users', function(req, res){
-    res.render('users/list_users', {
-	title: 'User list',
-        users: users
+    res.render('index', {
+	title: 'Welcome ' + req.currentUser.name
     });
 });
-*/
+
+
+app.get('/users', function(req, res){
+    User.find({}, function (err, users) {
+      if (err) return next(err);
+	res.render('users/list_users', {
+	    title: 'User list',
+            users: users
+	});
+    });
+});
+
 
 app.get('/users/:id.:format?/edit', loadUser, function(req, res) {
     var ObjectId = require('mongoose').Types.ObjectId; 
@@ -140,6 +128,8 @@ app.post('/users.:format?', loadUser, function(req, res) {
     var u = new User();
     u.name = req.body.user.name;
     u.email = req.body.user.email;
+    u.hashed_password = req.body.user.hashed_password;
+    u.isAdmin = req.body.user.isAdmin;
 
     // Persist the changes
     u.save(function() {
@@ -164,7 +154,10 @@ app.put('/users/:id.:format?', loadUser, function(req, res) {
 	// Do something with it
 	u.name = req.body.user.name;
 	u.email = req.body.user.email;
-	
+	u.hashed_password = req.body.user.hashed_password;
+	u.isAdmin = req.body.user.isAdmin != null ? 1 : 0;
+	console.log('isAdmin ' + req.body.user.isAdmin);
+
 	// Persist the changes
 	u.save(function() {
 	    // Respond according to the request format
@@ -198,6 +191,108 @@ app.del('/users/:id.:format?', loadUser, function(req, res) {
 	});
     });
 });
+
+
+// Events
+app.get('/events', loadUser, function (req, res, next) {
+    Event.find({}, function (err, events) {
+      if (err) return next(err);
+
+      res.render('events/list_events', {
+	  title: 'Events',
+          events: events
+      });
+    });
+  });
+
+
+app.get('/events/:id.:format?/edit', loadUser, function(req, res) {
+    var ObjectId = require('mongoose').Types.ObjectId; 
+    Event.findById(req.params.id, function(err, e) {
+      if (err) return next(err);
+      res.render('events/edit_event', {
+	  title: 'Edit Event',
+	  locals: { e: e }
+    });
+  });
+});
+
+app.get('/events/new', loadUser, function(req, res) {
+    res.render('events/new_event', {
+	title: 'New Event',
+	locals: { e: new Event() }
+    });
+});
+
+// Create 
+app.post('/events.:format?', loadUser, function(req, res) {
+    var e = new Event();
+    e.title = req.body.event.title;
+    e.date = req.body.event.date;
+    e.time = req.body.event.time;
+    e.noOfPlayers = req.body.event.noOfPlayers;
+
+
+    // Persist the changes
+    e.save(function() {
+	// Respond according to the request format
+	switch (req.params.format) {
+        case 'json':
+            res.send(e.__doc);
+            break;
+	    
+        default:
+            res.redirect('/');
+	}
+    });
+});
+
+
+
+app.put('/events/:id.:format?', loadUser, function(req, res) {
+  // Load the event
+    Event.findById(req.body.event._id, function(err, e) {
+	if (err) return next(err);
+	// Do something with it
+	e.title = req.body.event.title;
+	e.date = req.body.event.date;
+	e.time = req.body.event.time;
+	e.noOfPlayers = req.body.event.noOfPlayers;
+
+	// Persist the changes
+	e.save(function() {
+	    // Respond according to the request format
+	    switch (req.params.format) {
+            case 'json':
+		res.send(e.__doc);
+		break;
+		
+            default:
+		res.redirect('/');
+	    }
+	});
+    });
+});
+
+app.del('/events/:id.:format?', loadUser, function(req, res) {
+    Event.findById(req.params.id, function(err, e) {
+	if (err) return next(err);
+	
+	// Delete the event
+	e.remove(function() {
+	    // Respond according to the request format
+	    switch (req.params.format) {
+            case 'json':
+          res.send(e.__doc);
+		break;
+		
+            default:
+		res.redirect('/');
+	    }
+	});
+    });
+});
+
 
 
 // Sessions

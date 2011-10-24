@@ -7,9 +7,10 @@ var User = module.exports = new Schema({
 	type: String,
 	index: { unique: true }
     },
+    isAdmin: Boolean,
     name: String,
     lastseen: Date,
-    isonline: Boolean,
+    isOnline: Boolean,
     hashed_password: String,
     salt: String
 });

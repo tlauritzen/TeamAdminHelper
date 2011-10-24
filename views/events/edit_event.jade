@@ -1,0 +1,5 @@
+h2= title
+form(method='post', action='/events/' + e._id)
+  input(name='event[_id]', value=e._id, type='hidden')
+  input(name='_method', value='PUT', type='hidden')
+  !=partial('events/fields', { locals: { e: e } })

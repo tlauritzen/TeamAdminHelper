@@ -21,4 +21,7 @@ $(document).ready(function() {
 		.submit();
 	}
     });
+
+    $( "#datepicker" ).datepicker();
+    $.datepicker.regional
 });

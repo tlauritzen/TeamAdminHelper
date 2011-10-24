@@ -1,0 +1,14 @@
+!=partial('common/head')
+
+h1=title
+
+p
+  a(class='button', href='/events/new') + New Event
+
+ul
+  - for (var e in events)
+    li
+      a(class='button', href='/events/' + events[e]._id + '/edit') Edit
+      a(class='button destroy', href='/events/' + events[e]._id) Delete
+      a(href='/events/' + events[e]._id)
+        =events[e].title

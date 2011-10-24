@@ -8,4 +8,7 @@ div
   label Password:
     input(name='user[hashed_password]', value=u.hashed_password || '')
 div
+  label Administrator:
+    input(name='user[isAdmin]', id='user[isAdmin]', type='checkbox', value=u.isAdmin || 0)
+div
   input(type='submit', value='Save')
