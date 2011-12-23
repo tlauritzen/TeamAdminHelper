@@ -1,0 +1,10 @@
+!=partial('common/head')
+
+h1= title
+
+p
+  a(class='button', href='/users/' + user._id + '/edit') + Edit User
+
+p(style='white-space:pre;')
+  |Name #{user.name}
+  |Email #{user.email}

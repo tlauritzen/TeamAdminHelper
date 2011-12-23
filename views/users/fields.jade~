@@ -1,8 +1,0 @@
-div
-  label Name:
-    input(name='user[name]', value=u.name || '')
-div
-  label eMail:
-    input(name='user[email]', value=u.email || '')
-div
-  input(type='submit', value='Save')

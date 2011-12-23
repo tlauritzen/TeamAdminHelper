@@ -9,10 +9,11 @@ var app = module.exports = express.createServer();
 var MongoStore = require('connect-mongo');
 var mongoose = require('mongoose');
 require('./model');
+var controller_user = require('./controller/user.js');
+var controller_event = require('./controller/event.js');
+var controller_session = require('./controller/session.js');
 
 // Configuration
-
-
 var conf = {
   db: {
     db: 'db',
@@ -24,7 +25,6 @@ var conf = {
   },
   secret: '076ee61d63aa10a125ea872411e433b9'
 };
-
 
 function loadUser(req, res, next) {
   if (req.session.user_id) {
@@ -69,13 +69,14 @@ app.configure('production', function(){
 });
 
 var db = mongoose.connect('mongodb://localhost/db');
+
 mongoose.model('User', User);
 var User = db.model('User');
 
-
+/*
 mongoose.model('Event', Event);
 var Event = db.model('Event');
-
+*/
 
 app.configure(function () {
     app.set('db', db);
@@ -90,6 +91,34 @@ app.get('/', loadUser, function (req, res, next) {
 });
 
 
+// Users
+app.get('/users', controller_user.list);
+app.get('/users/:id.:format?/edit', loadUser, controller_user.edit);
+app.get('/users/new', loadUser, controller_user.add);
+
+app.post('/users.:format?', loadUser, controller_user.create);
+app.put('/users/:id.:format?', loadUser, controller_user.update);
+app.get('/users/:id.:format?', loadUser, controller_user.read);
+app.del('/users/:id.:format?', loadUser, controller_user.del);
+
+
+// Events
+app.get('/events', loadUser, controller_event.list);
+app.get('/events/:id.:format?/edit', loadUser, controller_event.edit);
+app.get('/events/new', loadUser, controller_event.add);
+
+app.post('/events.:format?', loadUser, controller_event.create);
+app.put('/events/:id.:format?', loadUser, controller_event.update);
+app.get('/events/:id.:format?', loadUser, controller_event.read);
+app.del('/events/:id.:format?', loadUser, controller_event.del);
+
+
+// Sessions
+app.get('/sessions/new', controller_session.list);
+app.post('/sessions', controller_session.create);
+app.del('/sessions', loadUser, controller_session.del)
+
+/*
 app.get('/users', function(req, res){
     User.find({}, function (err, users) {
       if (err) return next(err);
@@ -192,8 +221,9 @@ app.del('/users/:id.:format?', loadUser, function(req, res) {
     });
 });
 
-
+*/
 // Events
+/*
 app.get('/events', loadUser, function (req, res, next) {
     Event.find({}, function (err, events) {
       if (err) return next(err);
@@ -292,10 +322,11 @@ app.del('/events/:id.:format?', loadUser, function(req, res) {
 	});
     });
 });
-
+*/
 
 
 // Sessions
+/*
 app.get('/sessions/new', function(req, res) {
   res.render('sessions/new_session.jade', {
       title: "Login",
@@ -329,7 +360,7 @@ app.del('/sessions', loadUser, function(req, res) {
   }
   res.redirect('/sessions/new');
 });
-
+*/
 
 
 app.listen(3000);

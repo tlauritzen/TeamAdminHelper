@@ -1,0 +1,11 @@
+!=partial('common/head')
+
+h1= title
+
+p
+  a(class='button', href='/events/' + event._id + '/edit') + Edit Event
+
+p(style='white-space:pre;')
+  |Title: #{event.title}
+  |Date: #{event.date}
+  |Time: #{event.time}

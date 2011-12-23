@@ -1,5 +1,0 @@
-h2 Edit User
-form(method='post', action='/users/' + u._id)
-  input(name='user[_id]', value=u._id, type='hidden')
-  input(name='_method', value='PUT', type='hidden')
-  !=partial('users/fields', { locals: { u: u } })

@@ -43,28 +43,24 @@ Event
 Event
     .virtual('time')
     .get(function () {
-	return this.datetime != null ? this.datetime : new Date();
-	/*
+	var hh, mm;
 	if(this.datetime != null) {
-	    var hh = this.get('datetime').getHours();
-	    var mm = this.datetime.getMinutes();
-	    return hh + ":" + mm;
+	    hh = this.get('datetime').getHours();
+	    mm = this.datetime.getMinutes();
 	}
 	else {
-	    var d = new Date();
-	    var hh = d.getHours();
-	    var mm = d.getMinutes();
-	    return hh + ":" + mm;
+	    d = new Date();
+	    hh = d.getHours();
+	    mm = d.getMinutes();
 	}
-	*/
-
+	mm = mm < 10 ? '0' + mm : mm;
+	hh = hh < 10 ? '0' + hh : hh;
+	return hh + ":" + mm;
     })
     .set(function (value) {	
-	var newTime = new Date(value);
-	if(this.datetime != null) {
-	    newTime.setFullYear(this.datetime.getFullYear());
-	    newTime.setMonth(this.datetime.getMonth());
-	    newTime.setDate(this.datetime.getDate());
-	}
+	var timeParts = value.split(":");
+	var newTime = this.datetime != null ? this.datetime : new Date();
+	newTime.setHours(timeParts[0]);
+	newTime.setMinutes(timeParts[1]);
 	this.set('datetime', newTime);
     });
