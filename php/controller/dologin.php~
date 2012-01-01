@@ -1,0 +1,16 @@
+<?php
+
+$user="root";
+$password="fiat500";
+$database="teamadmin";
+mysql_connect(localhost,$user,$password);
+@mysql_select_db($database) or die( "Unable to select database");
+
+
+$username = $_REQUEST['username'];
+$password = $_REQUEST['password'];
+
+$query
+
+
+?>
