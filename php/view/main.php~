@@ -1,9 +1,0 @@
-<?php
-
-$title = "Main menu";
-
-require './view/head.php';
-require './view/login.php';
-require './view/foot.php';
-
-?>

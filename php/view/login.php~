@@ -1,7 +1,0 @@
-
-<form>
-  <div>Username: <input type="text" /></div>
-  <div>Password: <input type="text" /></div>
-  <div><input type="submit" /></div>
-</form>
-
