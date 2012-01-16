@@ -18,7 +18,7 @@ mysql_query($query);
 
 
 
-$query="CREATE TABLE teamadmin.users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_seen TIMESTAMP, PRIMARY KEY (id)) ENGINE = MYISAM";
+$query="CREATE TABLE teamadmin.users (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL, isadmin BOOLEAN NOT NULL, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, last_seen TIMESTAMP, PRIMARY KEY (id)) ENGINE = MYISAM";
 mysql_query($query) or die('Failed creating table users');
 
 $query="CREATE TABLE teamadmin.players (id INT NOT NULL AUTO_INCREMENT, name TEXT NOT NULL, user_id INT NOT NULL, created DATE NOT NULL, PRIMARY KEY (id)) ENGINE = MYISAM";
@@ -34,10 +34,19 @@ $query="CREATE TABLE teamadmin.players_for_users (user_id INT NOT NULL, player_i
 mysql_query($query) or die('Failed creating table players_for_users');
 
 
-$query="INSERT INTO teamadmin.users (name, username, password) VALUES (
+$query="INSERT INTO teamadmin.users (name, username, password, isadmin) VALUES (
  'Torben Lauritzen'
 ,'tl'
+,'hest',
+'1'
+)";
+mysql_query($query);
+
+$query="INSERT INTO teamadmin.users (name, username, password, isadmin) VALUES (
+ 'Stine Nielsen'
+,'sn'
 ,'hest'
+,'0'
 )";
 mysql_query($query);
 

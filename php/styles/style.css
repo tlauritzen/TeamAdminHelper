@@ -31,6 +31,24 @@ h2 {
   text-align: center;
 }
 
+a.menu {
+  display: block;
+  margin: 5px;
+  font-family: sans-serif;
+  font-weight: 500;
+  font-size: 10pt;
+  color: #dcdcdc;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+}
+
+a.menu:hover {
+  text-decoration: underline;
+}
+
+
 .text {
   font-family: sans-serif;
   text-transform: uppercase;

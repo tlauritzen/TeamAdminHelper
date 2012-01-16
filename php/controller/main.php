@@ -1,5 +1,7 @@
 <?php
 
+require 'guard.php';
+
 $relpath = '../';
 $title = "Main menu";
 

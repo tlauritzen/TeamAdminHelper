@@ -1,29 +1,23 @@
 <?php
 
+require 'db.php';
+
 $username = $_REQUEST['username'];
 $password = $_REQUEST['password'];
 
-$dbh = null;
+$result = execQuery("SELECT * FROM users WHERE username = ? AND password = ?", array($username, $password));
 
-$rowCount = 0;
-try {
-    $db_user="root";
-    $db_password="fiat500";
+if($result->rowCount() > 0) {
+    session_start();
+    $_SESSION['username'] = $username;
 
-    $dbh = new PDO('mysql:host=localhost;dbname=teamadmin', $db_user, $db_password);
-    $stmt = $dbh->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-    $stmt->execute(array($username, $password));
-    $rowCount = $stmt->rowCount();
-} catch (PDOException $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
-    die();
-}
-
-if($rowCount > 0) {
-  header("Location: ../controller/main.php");
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $isadmin = $row['isadmin'];
+    $_SESSION['isadmin'] = $isadmin;
+    header("Location: ../controller/main.php");
 }
 else {
-  header("Location: ../index.php");
+    header("Location: ../index.php");
 }
 
 ?>
