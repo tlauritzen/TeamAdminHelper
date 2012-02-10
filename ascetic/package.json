@@ -1,0 +1,7 @@
+{
+    "name": "teamadmin"
+  , "version": "0.0.1"
+  , "dependencies": {
+      "mongodb": ">= 0.9.6-7"
+  }
+}
