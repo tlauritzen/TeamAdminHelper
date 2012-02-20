@@ -64,25 +64,41 @@ UserProvider.prototype.verifyLogin = function(username, password, callback) {
 //save
 UserProvider.prototype.save = function(users, callback) {
     this.getCollection(function(error, user_collection) {
-      if( error ) callback(error)
-      else {
-        if( typeof(users.length)=="undefined")
-          users = [users];
-
-        for( var i =0;i< users.length;i++ ) {
-          users = users[i];
-          user.created_at = new Date();
-          if( user.comments === undefined ) user.comments = [];
-          for(var j =0;j< user.comments.length; j++) {
-            user.comments[j].created_at = new Date();
-          }
-        }
-
-        user_collection.insert(users, function() {
-          callback(null, users);
-        });
-      }
+	if( error ) callback(error)
+	else {
+            if( typeof(users.length)=="undefined")
+		users = [users];
+	    
+	    /*
+            for( var i =0;i< users.length;i++ ) {
+		users = users[i];
+		user.created_at = new Date();
+		if( user.comments === undefined ) user.comments = [];
+		for(var j =0;j< user.comments.length; j++) {
+		    user.comments[j].created_at = new Date();
+		}
+            }
+	    */
+            user_collection.insert(users, function() {
+		callback(null, users);
+            });
+	}
     });
 };
+
+
+//delete
+UserProvider.prototype.delete = function(username, callback) {
+    this.getCollection(function(error, user_collection) {
+	if( error ) callback(error)
+	else {
+	    user_collection.update({'username': username}, {}, 'remove', function(err, count) {
+		if( err ) console.log( err );
+		else callback(null, count);
+	    });
+	}
+    });
+};
+
 
 exports.UserProvider = UserProvider;

@@ -52,7 +52,7 @@ var saveUser = function(name, username, password, isadmin) {
     });
     
     $.getJSON(
-        '../model/saveUser.php', 
+        '../saveUser.json', 
 	{
 	    "name": name,
 	    "username": username,

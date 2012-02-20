@@ -10,5 +10,6 @@ handle["/logout"] = requestHandlers.logout;
 handle["/doLogin"] = requestHandlers.doLogin;
 handle["/users"] = requestHandlers.users;
 handle["/getUsers.json"] = requestHandlers.getUsersJSON;
+handle["/saveUser.json"] = requestHandlers.saveUserJSON;
 
 server.start(router.route, handle);

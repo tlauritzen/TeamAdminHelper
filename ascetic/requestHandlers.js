@@ -7,6 +7,8 @@ var exec = require("child_process").exec;
 var UserProvider = require('./model/UserProvider').UserProvider;
 
 var sessions = {};  
+
+var userProvider;
   
 var SID_STRING = 'SESSIONID';  
 var TIMEOUT = 3*60*1000;  
@@ -22,14 +24,35 @@ function start(request, response) {
     });
 }
 
+
+function init(callback)  {
+    if( !userProvider ) {
+	tmpUserProvider = new UserProvider();
+	tmpUserProvider.openDb('localhost', 27017, function(err, db) {
+	    if(err) console.log(err);
+	    else {
+		userProvider = tmpUserProvider;
+		callback();
+	    }
+	});
+    }
+    else {
+	callback();
+    }
+}
+			      
+
 function login(request, response) {
     console.log("Request handler 'login' was called.");
-    data = {title: 'Login TeamAdmin'};
 
-    cookies = getCookies(request);
-    sid = cookies[SID_STRING];
-
-    render('views/login.html', response, data, 'text/html', 'utf-8', sid);
+    init(function() {
+	data = {title: 'Login TeamAdmin'};
+	
+	cookies = getCookies(request);
+	sid = cookies[SID_STRING];
+	
+	render('views/login.html', response, data, 'text/html', 'utf-8', sid);	
+    });
 }
 
 function logout(request, response) {
@@ -40,6 +63,7 @@ function logout(request, response) {
     redirect(request, response, '', null);
 }
 
+/*
 var userinfo = [
     {
 	'name': 'Torben Lauritzen',
@@ -52,6 +76,8 @@ var userinfo = [
 	'password': 'hest'
     }    
 ];
+*/
+
 
 function users(request, response) {
     console.log("Arguments callee name: " + arguments.callee.name);
@@ -76,27 +102,47 @@ function getUsersJSON(request, response) {
 	    console.log(err);
 	}	    
 	else {
-	    userProvider = new UserProvider();
-	    userProvider.openDb('localhost', 27017, function(err, db) {
-		userProvider.findAll(function(error, result) {
-		    console.log('FindAll called');
-		    if( error ) console.log(error);
-		    else {
-			type = 'application/json';
-			encoding = 'utf-8';
-			header = sid != null ? {'Set-Cookie': 'SESSIONID=' + sid, 'Content-Type': type} : {'Content-Type': type}; 
-			response.writeHead(200, header);
-			console.log(JSON.stringify(result));
-			response.write(JSON.stringify(result), encoding);
-			response.end();
-		    }
-		});		
+	    userProvider.findAll(function(error, result) {
+		console.log('FindAll called');
+		if( error ) console.log(error);
+		else {
+		    type = 'application/json';
+		    encoding = 'utf-8';
+		    header = sid != null ? {'Set-Cookie': 'SESSIONID=' + sid, 'Content-Type': type} : {'Content-Type': type}; 
+		    response.writeHead(200, header);
+		    response.end(JSON.stringify(result), encoding);
+		}
+	    });		
+	}
+    });
+}
+
+function saveUserJSON(request, response) {
+    grantAccess(request, response, function(sid, err) {
+	if(err) {
+	    console.log(err);
+	}	    
+	else {
+	    url_parts = querystring.parse(url.parse(request.url).query);    
+	    user = {
+		'name': url_parts.name,
+		'username': url_parts.username,
+		'password': url_parts.password,
+		'isadmin': url_parts.isadmin
+	    }
+	    userProvider.save(user, function(err, users) {
+		type = 'application/json';
+		encoding = 'utf-8';
+		header = sid != null ? {'Set-Cookie': 'SESSIONID=' + sid, 'Content-Type': type} : {'Content-Type': type}; 
+		response.writeHead(200, header);
+		response.end(JSON.stringify(users), encoding);
 	    });
 	}
     });
-
-
 }
+
+function deleteUserJSON() {}
+
 
 function doLogin(request, response) {
     console.log("Request handler 'doLogin' was called.");
@@ -104,21 +150,15 @@ function doLogin(request, response) {
     username = url_parts.username;
     password = url_parts.password;
 
-    console.log(username + ' ' + password);
-
-
-    userProvider = new UserProvider();
-    userProvider.openDb('localhost', 27017, function(err, db) {
-	userProvider.verifyLogin(username, password, function(error, result) {
-	    console.log('verifyLogin called');
-	    if( error || !result ) redirect(request, response, '', null);
-	    else {
-		sessionId = startSession(request, response);
-		console.log('Redirecting to main ' + result);
-		data = {title: 'Login teamadmin'};
-		redirect(request, response, 'views/main.html', sessionId);
-	    }
-	});		
+    userProvider.verifyLogin(username, password, function(error, result) {
+	console.log('verifyLogin called');
+	if( error || !result ) redirect(request, response, '', null);
+	else {
+	    sessionId = startSession(request, response);
+	    console.log('Redirecting to main ' + result);
+	    data = {title: 'Login teamadmin'};
+	    redirect(request, response, 'views/main.html', sessionId);
+	}
     });
 
     /*
@@ -289,3 +329,5 @@ exports.logout = logout;
 exports.doLogin = doLogin;
 exports.users = users;
 exports.getUsersJSON = getUsersJSON;
+exports.saveUserJSON = saveUserJSON;
+exports.deleteUserJSON = deleteUserJSON;
